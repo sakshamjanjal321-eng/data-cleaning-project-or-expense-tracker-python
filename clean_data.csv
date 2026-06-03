@@ -1,0 +1,7 @@
+id,name,age,salary,score,date_joined,department
+1.0,Alice,26.0,50000.0,88.0,2023-01-01,Hr
+2.0,Bob,32.0,60000.0,72.0,,It
+3.0,Charlie,30.0,58000.0,95.0,,Finance
+4.0,Diana,29.0,68500.0,60.0,,Hr
+6.0,Eve,28.0,52000.0,77.0,,Unknown
+8.0,Grace,29.0,58000.0,91.0,,Hr
