@@ -7,8 +7,8 @@ Handles: nulls, duplicates, wrong formats, inconsistent columns, outliers.
 Usage:
     python data_cleaning.py
 
-Input:  raw_data.csv  (place in same folder)
-Output: clean_data.csv
+Input:  data/raw_data.csv  (place in same folder)
+Output: data/clean_data.csv
 """
 
 import pandas as pd
@@ -18,8 +18,8 @@ import os
 # ──────────────────────────────────────────
 # CONFIG
 # ──────────────────────────────────────────
-INPUT_FILE  = "raw_data.csv"
-OUTPUT_FILE = "clean_data.csv"
+INPUT_FILE  = "data/raw_data.csv"
+OUTPUT_FILE = "data/clean_data.csv"
 
 # Columns expected to be numeric (adjust to your dataset)
 NUMERIC_COLS = ["age", "salary", "score"]
@@ -66,7 +66,7 @@ def clean_column_names(df: pd.DataFrame) -> pd.DataFrame:
         .str.replace(r"[\s\-/]+", "_", regex=True)
         .str.replace(r"[^\w]", "", regex=True)
     )
-    print("[✓] Column names standardized to snake_case")
+    print("[OK] Column names standardized to snake_case")
     return df
 
 
@@ -78,7 +78,7 @@ def remove_duplicates(df: pd.DataFrame) -> pd.DataFrame:
     before = len(df)
     df = df.drop_duplicates()
     dropped = before - len(df)
-    print(f"[✓] Duplicates removed: {dropped} rows dropped")
+    print(f"[OK] Duplicates removed: {dropped} rows dropped")
     return df
 
 
@@ -95,7 +95,7 @@ def handle_nulls(df: pd.DataFrame) -> pd.DataFrame:
     before = len(df)
     required = [c for c in REQUIRED_COLS if c in df.columns]
     df = df.dropna(subset=required)
-    print(f"[✓] Rows dropped (missing required fields): {before - len(df)}")
+    print(f"[OK] Rows dropped (missing required fields): {before - len(df)}")
 
     # Fill numeric columns with median
     num_cols = [c for c in NUMERIC_COLS if c in df.columns]
@@ -104,7 +104,7 @@ def handle_nulls(df: pd.DataFrame) -> pd.DataFrame:
         nulls = df[col].isnull().sum()
         df[col] = df[col].fillna(median_val)
         if nulls:
-            print(f"[✓] '{col}' — filled {nulls} nulls with median ({median_val:.2f})")
+            print(f"[OK] '{col}' - filled {nulls} nulls with median ({median_val:.2f})")
 
     # Fill text columns with 'Unknown'
     text_cols = df.select_dtypes(include=["object", "string"]).columns
@@ -112,7 +112,7 @@ def handle_nulls(df: pd.DataFrame) -> pd.DataFrame:
         nulls = df[col].isnull().sum()
         df[col] = df[col].fillna("Unknown")
         if nulls:
-            print(f"[✓] '{col}' — filled {nulls} nulls with 'Unknown'")
+            print(f"[OK] '{col}' - filled {nulls} nulls with 'Unknown'")
 
     return df
 
@@ -126,13 +126,13 @@ def fix_data_types(df: pd.DataFrame) -> pd.DataFrame:
     num_cols = [c for c in NUMERIC_COLS if c in df.columns]
     for col in num_cols:
         df[col] = pd.to_numeric(df[col], errors="coerce")
-        print(f"[✓] '{col}' converted to numeric")
+        print(f"[OK] '{col}' converted to numeric")
 
     # Date columns
     date_cols = [c for c in DATE_COLS if c in df.columns]
     for col in date_cols:
         df[col] = pd.to_datetime(df[col], errors="coerce", dayfirst=True)
-        print(f"[✓] '{col}' converted to datetime")
+        print(f"[OK] '{col}' converted to datetime")
 
     return df
 
@@ -145,7 +145,7 @@ def standardize_text(df: pd.DataFrame) -> pd.DataFrame:
     text_cols = df.select_dtypes(include=["object", "string"]).columns
     for col in text_cols:
         df[col] = df[col].str.strip().str.title()
-    print(f"[✓] Text columns standardized (strip + title case): {list(text_cols)}")
+    print(f"[OK] Text columns standardized (strip + title case): {list(text_cols)}")
     return df
 
 
@@ -164,7 +164,7 @@ def remove_outliers(df: pd.DataFrame) -> pd.DataFrame:
         outliers = ((df[col] < lower) | (df[col] > upper)).sum()
         df[col] = df[col].clip(lower=lower, upper=upper)
         if outliers:
-            print(f"[✓] '{col}' — {outliers} outliers capped (IQR method)")
+            print(f"[OK] '{col}' - {outliers} outliers capped (IQR method)")
     return df
 
 
@@ -180,8 +180,10 @@ def save_and_report(df: pd.DataFrame, filepath: str):
     print(f"Remaining nulls:\n{df.isnull().sum()}")
     print("=" * 50)
 
+    # Ensure parent directory exists
+    os.makedirs(os.path.dirname(filepath), exist_ok=True)
     df.to_csv(filepath, index=False)
-    print(f"\n[✓] Clean data saved to '{filepath}'\n")
+    print(f"\n[OK] Clean data saved to '{filepath}'\n")
 
 
 # ──────────────────────────────────────────

@@ -2,7 +2,7 @@ import csv
 import os
 from datetime import datetime
 
-DATA_FILE = "expenses.csv"
+DATA_FILE = "data/expenses.csv"
 CATEGORIES = ["food", "transport", "utilities", "entertainment", "other"]
 
 class Expense:
@@ -37,6 +37,8 @@ class ExpenseTracker:
                 )
 
     def save(self):
+        # Ensure the data directory exists
+        os.makedirs(os.path.dirname(DATA_FILE), exist_ok=True)
         with open(DATA_FILE, "w", newline="") as f:
             fieldnames = ["date", "category", "amount", "description"]
             writer = csv.DictWriter(f, fieldnames=fieldnames)
@@ -140,7 +142,7 @@ class ExpenseTracker:
         label = datetime(year, month, 1).strftime("%B %Y")
         filtered = self.filter_by_month(year, month)
 
-        print(f"\n── {label} ──")
+        print(f"\n== {label} ==")
         self.list_recent(expenses=filtered, n=len(filtered))
         self.summary(expenses=filtered)
     # ────────────────────────────────────────────────────────────────────────
