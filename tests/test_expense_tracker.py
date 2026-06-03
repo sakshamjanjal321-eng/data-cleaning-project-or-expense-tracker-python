@@ -96,3 +96,21 @@ def test_tracker_available_months(temp_expense_file):
     
     months = tracker.get_available_months()
     assert months == [(2025, 12), (2026, 1), (2026, 3)]
+
+def test_data_cleaning_standardize_text():
+    from src.data_cleaning import standardize_text
+    import pandas as pd
+    
+    # Create a dummy DataFrame with messy text
+    df = pd.DataFrame({
+        "name": ["  alice  ", "BOB", "  charlie"],
+        "department": ["hr", "  IT  ", "finance"]
+    })
+    
+    # Clean text columns
+    df_cleaned = standardize_text(df)
+    
+    # Assert values are stripped and Title Cased
+    assert list(df_cleaned["name"]) == ["Alice", "Bob", "Charlie"]
+    assert list(df_cleaned["department"]) == ["Hr", "It", "Finance"]
+

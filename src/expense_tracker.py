@@ -159,7 +159,13 @@ def main():
         choice = input("Choose: ").strip()
         if choice == "1":
             cat = input(f"Category ({', '.join(CATEGORIES)}): ").strip().lower()
-            amt = input("Amount (Rs.): ").strip()
+            while True:
+                amt = input("Amount (Rs.): ").strip()
+                try:
+                    float(amt)
+                    break
+                except ValueError:
+                    print("Amount must be a number. Please try again.")
             desc = input("Description: ").strip()
             tracker.add(cat, amt, desc)
         elif choice == "2":
